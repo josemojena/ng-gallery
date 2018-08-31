@@ -1,2 +1,2 @@
 # ng-gallery
-Gallery from Angular app
+Gallery for Angular app backend
