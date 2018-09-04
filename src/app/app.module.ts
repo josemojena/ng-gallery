@@ -4,6 +4,8 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { GalleryModule } from './modules/gallery/gallery.module';
+import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
+//import {DialogComponent, GalleryComponent} from './modules/gallery/gallery.component';
 
 
 @NgModule({
@@ -15,6 +17,10 @@ import { GalleryModule } from './modules/gallery/gallery.module';
     GalleryModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: []
 })
 export class AppModule { }
+
+
+//platformBrowserDynamic().bootstrapModule(AppModule);

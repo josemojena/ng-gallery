@@ -1,3 +1,38 @@
 h1 {
   color: red;
 }
+.ng-gallery-images-left{
+  float: left; margin: 0px 0px 15px 10px;
+  max-width: 150px;
+
+}
+.div-float-right{
+  width: 25%; float: right;
+}
+.div-float-left{
+  margin-top: 5px;
+  width: 75%;
+  float: left;
+  height: 350px;
+  overflow-y: scroll
+}
+
+.file-upload{
+   min-height: 400px;text-align: center
+}
+img {
+  border: 1px solid gainsboro;
+}
+img:hover { opacity: 0.7; }
+
+.img-view {
+  width: 140px;
+  border: 1px solid gainsboro;
+}
+ul{
+  list-style: none;
+  padding-left:0px;
+}
+.details-card {
+  margin-left: 10px;
+}
