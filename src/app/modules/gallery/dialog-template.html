@@ -1,13 +1,13 @@
-<h1 mat-dialog-title>Images Gallery</h1>
+<h1 mat-dialog-title><strong>Images Gallery</strong></h1>
+<div class="alert alert-error padding-top" *ngIf="errorMsg != ''">{{errorMsg}}</div>
+<div mat-dialog-content>
 
-<div mat-dialog-content >
-
-  <mat-tab-group dynamicHeight="true" [selectedIndex]="1">
+  <mat-tab-group #tabGroup dynamicHeight="true" [selectedIndex]="1">
     <mat-tab label="Upload a file" id="tab-upload-file">
       <mat-progress-bar mode="indeterminate" *ngIf="showProgressBar"></mat-progress-bar>
-      <div class="file-upload">
 
-        <div style="padding-left: 3%; padding-top: 20%">
+      <div class="file-upload">
+        <div class="div-upload">
           <div class=".separator"></div>
           <button mat-raised-button (click)="fileInput.click()">
             <i class="material-icons">file_upload</i>
@@ -15,35 +15,45 @@
           </button>
         </div>
         <input type="file" #fileInput id="fileLoader" name="file" title="Load File" (change)="onFileChange($event)"
-               style="display:none"/>
+          style="display:none" />
       </div>
     </mat-tab>
 
     <mat-tab label="Media library" id="tab-select-file">
       <div class="div-float-left">
-        <div *ngFor="let file of files" >
-          <img src="{{data.baseUrl}}{{file.thumbnail}}" (click)="selectFile(file)" class="ng-gallery-images-left">
+
+        <div *ngFor="let file of files">
+
+          <img src="{{data.baseUrl}}{{file.thumbnail}}" (click)="selectFile(file)" [ngClass]="fileSelected.Id ==  file.Id ? 'ng-gallery-images-left gallery-selected' : 'ng-gallery-images-left' ">
+
+          <!--<ng-template #elseBlock>
+          <div>
+            <img src="{{data.baseUrl}}{{file.thumbnail}}" (click)="selectFile(file)" class="ng-gallery-images-left">
+          </div>
+
+        </ng-template>-->
         </div>
       </div>
       <div class="div-float-right">
-            <div class="details-card" *ngIf="fileSelected.thumbnail!=''">
-                <label>Attachment Details</label>
-                <img src="{{data.baseUrl}}{{fileSelected.thumbnail}}" class="img-view">
-                 <div>
-                  <ul>
-                    <li><a href="">Remove this file</a></li>
-                    <li><strong>Date:</strong> {{fileSelected.lastModified}}</li>
-                    <li><strong>Size:</strong> {{fileSelected.size}}</li>
-                    <li><textarea style="min-height: 123px; min-width: 170px" rows=3 type="text" #inputTarget
-                      value="{{fileSelected.file}}"></textarea> </li>
-                    <li>
-                      <button [ngxClipboard]="inputTarget" mat-raised-button>Copy </button> </li>
-                  </ul>
-                  </div>
-              </div>
+        <div class="details-card" *ngIf="fileSelected.thumbnail!=''">
+          <label>Attachment Details</label>
+          <img src="{{data.baseUrl}}{{fileSelected.thumbnail}}" class="img-view">
+          <div>
+            <ul>
+              <li><a href="#" (click)="remove(fileSelected)">Remove this file</a></li>
+              <li><strong>Date:</strong> {{fileSelected.lastModified}}</li>
+              <li><strong>Size:</strong> {{fileSelected.size}}</li>
+              <li><textarea style="min-height: 123px; min-width: 170px" rows=3 type="text" #inputTarget value="{{fileSelected.file}}"></textarea>
+              </li>
+              <li>
+                <button [ngxClipboard]="inputTarget" mat-raised-button>Copy </button> </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </mat-tab>
   </mat-tab-group>
 </div>
-<div style="float: right; position: relative;"><button mat-raised-button [mat-dialog-close]="" cdkFocusInitial color="primary"> Close</button>
+<div style="float: right; position: relative;"><button mat-raised-button [mat-dialog-close]="" cdkFocusInitial color="primary">
+    Close</button>
 </div>

@@ -2,6 +2,7 @@ import { Component, Inject, Input, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogConfig } from '@angular/material';
 import { GalleryService } from './gallery.service';
 import { ConfigurationInterface, FileInfo, DialogData } from './shared/interfaces';
+import { ArrayType } from '@angular/compiler/src/output/output_ast';
 
 
 @Component({
@@ -19,24 +20,22 @@ export class GalleryComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    /*setTimeout(() => {
-
-    });*/
-
   }
 
-  openMedia(){
+  openMedia() {
 
     const dialogRef = this.dialog.open(DialogComponent, {
       width: this.Config.width,
       height: this.Config.height,
       data: {
-        retrieveUrl: this.Config.restUrl,
+        retrieveUrl: this.Config.restUrl, //upload to get files list
         fieldToSend: [],
-        uploadUrl: this.Config.restUrl,
-        baseUrl: this.Config.baseUrl
+        uploadUrl: this.Config.restUrl,//Url to upload a new file
+        baseUrl: this.Config.baseUrl, //public path to display thumb-files
+        removeUrl: this.Config.restUrl //Url to remove
       }
+      //@TODO I used the same url to retrieve, upload and remove because I just changed the protocol depend of the request
+      //You can use different url as you wish
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -80,7 +79,7 @@ export class DialogComponent implements OnInit {
    * @type {FileInfo}
    * @memberof DialogComponent
    */
-  fileSelected: FileInfo ;
+  fileSelected: FileInfo;
   /**
    *Creates an instance of DialogComponent.
    *
@@ -93,10 +92,13 @@ export class DialogComponent implements OnInit {
 
   @ViewChild('tabGroup') tabGroup;
 
+
+  classSelected = "gallery-selected";
+
   constructor(
     public dialogRef: MatDialogRef<DialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData, private galleryService: GalleryService) {
-     this.fileSelected = new FileInfo();
+
   }
 
   /**
@@ -105,9 +107,15 @@ export class DialogComponent implements OnInit {
    * @memberof DialogComponent
    */
   ngOnInit() {
+    this.initSelectedFile();
+    this.errorMsg = '';
     this.loadFiles();
+
   }
 
+  initSelectedFile() {
+    this.fileSelected = new FileInfo();
+  }
   /**
    * Method that return a list of files from server...
    *
@@ -115,14 +123,38 @@ export class DialogComponent implements OnInit {
    */
   loadFiles() {
     this.galleryService.loadFiles(this.data.retrieveUrl).subscribe((response) => {
-      if (response.status !== 200) {
-        throw new Error('An error has ocurred: Status response(' + response.status + ')');
-      }
-      this.files = ((response.body) as Array<FileInfo>).slice(0, 20);
 
+      try {
+        if (response.status !== 200) {
+          throw new Error('An error has ocurred: Status response(' + response.status + ')');
+        }
+        const result = ((response.body) as Array<FileInfo>);
+        if (Array.isArray(result)) {
+          this.files = result.slice(0, 20);
+        }
+        else {
+          this.files = [];
+        }
+      }
+      catch (error) {
+        this.showErrorMsg(error);
+      }
     });
   }
 
+  remove(file: FileInfo) {
+
+    this.galleryService.remove(this.data.removeUrl, file.Id).subscribe(response => {
+      if (response.status === 200) {
+        this.loadFiles();
+        this.initSelectedFile();
+
+      }
+    }, error => {
+
+    });
+
+  }
 
   /**
    * Listen onFileChange Event
@@ -130,6 +162,7 @@ export class DialogComponent implements OnInit {
    */
   onFileChange(event): void {
 
+    this.clearError();
     this.setVisibleProgressBar(true);
     const reader = new FileReader();
 
@@ -152,21 +185,21 @@ export class DialogComponent implements OnInit {
           try {
             this.setVisibleProgressBar(false);
 
-            if (response.status !== undefined &&  response.status !== 200) {
-
+            if (response.status !== undefined && response.status !== 200) {
               throw new Error('An error has ocurred: Status response(' + response.status + ')');
             }
-            this.ActiveTab(2);
 
+            this.loadFiles();
+            this.ActiveTab(2);
 
           }
           catch (error) {
-            this.errorMsg = error;
+            this.showErrorMsg(error);
           }
         },
           error1 => {
             this.setVisibleProgressBar(false);
-            this.errorMsg = "Internal Server Error";
+            this.showErrorMsg('An error has ocurred: Status response(' + error1.status + ')');
           });
 
 
@@ -175,7 +208,6 @@ export class DialogComponent implements OnInit {
   }
   selectFile(file: FileInfo) {
     this.fileSelected = file;
-    console.log(this.fileSelected);
   }
   onNoClick(): void {
     this.dialogRef.close();
@@ -190,15 +222,25 @@ export class DialogComponent implements OnInit {
     this.showProgressBar = status;
   }
 
- /**
-   * Set active tab
-   *
-   * @param number
-   * @constructor
-   */
-  ActiveTab(number){
+  clearError() {
+    this.errorMsg = "";
+  }
+  /**
+    * Set active tab
+    *
+    * @param number
+    * @constructor
+    */
+  ActiveTab(number) {
     this.tabGroup.selectedIndex = number;
-}
+  }
+
+  showErrorMsg (error: string){
+    this.errorMsg = error;
+    setTimeout(() => {
+     this.errorMsg = "";
+  }, 5000);
+  }
 }
 
 

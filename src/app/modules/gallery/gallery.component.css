@@ -1,5 +1,5 @@
 h1 {
-  color: red;
+  /*color: red;*/
 }
 .ng-gallery-images-left{
   float: left; margin: 0px 0px 15px 10px;
@@ -16,7 +16,9 @@ h1 {
   height: 350px;
   overflow-y: scroll
 }
-
+.div-upload {
+  padding-left: 3%; padding-top: 20%;
+}
 .file-upload{
    min-height: 400px;text-align: center
 }
@@ -35,4 +37,22 @@ ul{
 }
 .details-card {
   margin-left: 10px;
+}
+.alert-error {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+.padding-top{
+  margin-top: 10px;
+}
+.gallery-selected {
+  border: 2px solid #000;
+
 }
