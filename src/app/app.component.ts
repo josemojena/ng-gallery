@@ -11,7 +11,7 @@ export class AppComponent {
 
 
   config = {
-    restUrl: "http://localhost:3001/backend-api-rest/api/gallery",
+    restUrl: "http://localhost:3001/backend-api-rest/api/gallery",//Path to load, upload and delete a file.
     baseUrl: "http://pornfinger.local/", //public directory to display all files
     width: "1024px",
     height: "650px"
