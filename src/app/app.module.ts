@@ -16,6 +16,7 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
     BrowserModule,
     GalleryModule
   ],
+  exports:[GalleryModule],
   providers: [],
   bootstrap: [AppComponent],
   entryComponents: []
